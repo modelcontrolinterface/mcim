@@ -6,15 +6,14 @@ import (
 	"github.com/gorilla/rpc/json"
 )
 
-// NewRouter creates a new RPC router.
 func NewRouter() *mux.Router {
 	s := rpc.NewServer()
-	s.RegisterCodec(json.NewCodec(), "application/json")
 
+	s.RegisterCodec(json.NewCodec(), "application/json")
 	s.RegisterService(new(ExecutionService), "")
-	s.RegisterService(new(EchoService), "")
 
 	r := mux.NewRouter()
-	r.Handle("/rpc", s)
+	r.Handle("/", s)
+
 	return r
 }

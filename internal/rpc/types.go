@@ -1,23 +1,28 @@
 package rpc
 
-// ExecuteRequest is the request for the ExecutionService.Execute method.
+import "time"
+
+type Action string
+
+const (
+	ActionRun        Action = "run"
+	ActionSave       Action = "save"
+	ActionSaveOnRun  Action = "save_on_run"
+	ActionSaveAndRun Action = "save_and_run"
+)
+
 type ExecuteRequest struct {
-	ExecutionID string `json:"executionID"`
-	Code        string `json:"code"`
+	ExecutionID string         `json:"executionID"`
+	Code        string         `json:"code"`
+	Environment *string        `json:"env,omitempty"`
+	Filename    *string        `json:"filename,omitempty"`
+	Action      *Action        `json:"action,omitempty"`
+	Timeout     *time.Duration `json:"timeout,omitempty"`
 }
 
-// ExecuteResponse is the response for the ExecutionService.Execute method.
 type ExecuteResponse struct {
-	ExecutionID string `json:"executionID"`
-	Output      string `json:"output"`
-}
-
-// EchoRequest is the request for the EchoService.Echo method.
-type EchoRequest struct {
-	Message string `json:"message"`
-}
-
-// EchoResponse is the response for the EchoService.Echo method.
-type EchoResponse struct {
-	Message string `json:"message"`
+	ExecutionID string  `json:"executionID"`
+	Output      *string `json:"output,omitempty"`
+	StdErr      *string `json:"stderr,omitempty"`
+	StdOut      *string `json:"stdout,omitempty"`
 }
