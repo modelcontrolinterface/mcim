@@ -11,7 +11,7 @@ import (
 func TestExecutionService_Execute(t *testing.T) {
 	router := NewRouter()
 
-	reqBody := map[string]interface{}{
+	reqBody := map[string]any{
 		"method": "ExecutionService.Execute",
 		"params": []map[string]string{{"executionID": "123", "code": "fmt.Println(\"hello world\")"}},
 		"id":     "1",
@@ -32,12 +32,12 @@ func TestExecutionService_Execute(t *testing.T) {
 			status, http.StatusOK)
 	}
 
-	var resp map[string]interface{}
+	var resp map[string]any
 	if err := json.Unmarshal(rr.Body.Bytes(), &resp); err != nil {
 		t.Fatal(err)
 	}
 
-	result := resp["result"].(map[string]interface{})
+	result := resp["result"].(map[string]any)
 	if result["executionID"] != "123" {
 		t.Errorf("handler returned unexpected executionID: got %v want %v",
 			result["executionID"], "123")
