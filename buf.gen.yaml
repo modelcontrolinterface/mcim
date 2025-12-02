@@ -1,9 +1,0 @@
-version: v2
-managed:
-  enabled: true
-inputs:
-  - module: buf.build/modelcontrolinterface/application
-  - module: buf.build/modelcontrolinterface/event-hook
-  - module: buf.build/modelcontrolinterface/interceptor
-  - module: buf.build/modelcontrolinterface/sandbox
-  - module: buf.build/modelcontrolinterface/service
