@@ -5,7 +5,7 @@ import "net/http"
 type ExecutionService struct{}
 
 func (s *ExecutionService) Execute(r *http.Request, args *ExecuteRequest, reply *ExecuteResponse) error {
-	out := "Executed: " + args.Code
+	out := args.Code
 
 	reply.ExecutionID = args.ExecutionID
 	reply.Output = &out
