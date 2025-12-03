@@ -117,9 +117,9 @@ func TestConfig_Defaults(t *testing.T) {
 
 		service := cfg.Services["com.spotify/music"]
 		require.NotNil(t, service)
-		require.NotNil(t, service.Enable == &randomBool)
+		require.NotNil(t, service.Enable)
 
-		assert.False(t, *service.Enable)
+		assert.True(t, *service.Enable == randomBool)
 	})
 }
 
