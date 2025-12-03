@@ -10,7 +10,7 @@ type Config struct {
 type Sandbox struct {
 	Enable *bool           `toml:"enable"`
 	Source string          `toml:"source"`
-	Hash   *string         `toml:"hash"`
+	Hash   string          `toml:"hash"`
 	Config *map[string]any `toml:"config"`
 }
 
@@ -18,12 +18,12 @@ type Interceptor struct {
 	Enable   *bool           `toml:"enable"`
 	Source   string          `toml:"source"`
 	Priority int             `toml:"priority"`
-	Hash     *string         `toml:"hash"`
+	Hash     string          `toml:"hash"`
 	Config   *map[string]any `toml:"config"`
 }
 
 type Service struct {
 	Enable *bool           `toml:"enable"`
-	Hash   *string         `toml:"hash"`
+	Hash   string          `toml:"hash"`
 	Config *map[string]any `toml:"config"`
 }

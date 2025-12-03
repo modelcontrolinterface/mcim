@@ -24,7 +24,7 @@ func TestConfig_WriteRead(t *testing.T) {
 			"daytona": {
 				Enable: &tbool,
 				Source: "github.com/daytona/daytona",
-				Hash:   &hash,
+				Hash:   hash,
 				Config: &map[string]any{
 					"foo": "bar",
 				},
@@ -35,7 +35,7 @@ func TestConfig_WriteRead(t *testing.T) {
 			"logger": {
 				Enable:   &tbool,
 				Source:   "github.com/acme/interceptor",
-				Hash:     &hash,
+				Hash:     hash,
 				Priority: 10,
 				Config: &map[string]any{
 					"baz": int64(123),
@@ -46,7 +46,7 @@ func TestConfig_WriteRead(t *testing.T) {
 		Services: map[string]Service{
 			"com.spotify/music": {
 				Enable: &tbool,
-				Hash:   &hash,
+				Hash:   hash,
 				Config: &map[string]any{
 					"enabled": true,
 				},
@@ -76,7 +76,9 @@ func TestConfig_WriteRead(t *testing.T) {
 }
 
 func TestConfig_Defaults(t *testing.T) {
-	t.Parallel()
+	t.Parallel() // Run tests in parallel
+
+	validHash := "sha256-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 
 	t.Run("it sets Enable to true when it is missing", func(t *testing.T) {
 		tempDir := t.TempDir()
@@ -85,7 +87,7 @@ func TestConfig_Defaults(t *testing.T) {
 		version = 1
 
 		[services."com.spotify/music"]
-		hash = "sha256-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+		hash = "` + validHash + `"
 		`
 
 		err := os.WriteFile(testConfigFile, []byte(tomlData), 0o644)
@@ -106,7 +108,7 @@ func TestConfig_Defaults(t *testing.T) {
 
 		[services."com.spotify/music"]
 		enable = false
-		hash = "sha256-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+		hash = "` + validHash + `"
 		`
 
 		err := os.WriteFile(testConfigFile, []byte(tomlData), 0o644)
@@ -127,7 +129,7 @@ func TestConfig_Defaults(t *testing.T) {
 
 		[services."com.spotify/music"]
 		enable = true
-		hash = "sha256-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+		hash = "` + validHash + `"
 		`
 
 		err := os.WriteFile(testConfigFile, []byte(tomlData), 0o644)
@@ -142,7 +144,7 @@ func TestConfig_Defaults(t *testing.T) {
 }
 
 func TestConfig_Validation(t *testing.T) {
-	t.Parallel()
+	t.Parallel() // Run tests in parallel
 
 	validHash := "sha256-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 
@@ -210,7 +212,7 @@ func TestConfig_Validation(t *testing.T) {
 		assert.ErrorContains(t, err, "invalid hash format")
 	})
 
-	t.Run("nil hash should pass validation", func(t *testing.T) {
+	t.Run("nil hash should fail validation", func(t *testing.T) {
 		tempDir := t.TempDir()
 		testConfigFile := filepath.Join(tempDir, "test_config.toml")
 		tomlData := `
@@ -223,6 +225,7 @@ func TestConfig_Validation(t *testing.T) {
 		require.NoError(t, err)
 
 		_, err = LoadFile(testConfigFile)
-		assert.NoError(t, err)
+		assert.ErrorContains(t, err, "requires a hash")
 	})
 }
+
