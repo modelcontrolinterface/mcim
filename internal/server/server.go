@@ -8,9 +8,10 @@ import (
 
 func NewRouter() *mux.Router {
 	s := rpc.NewServer()
+	serverManagerService := new(ServerManagerService)
 
 	s.RegisterCodec(json.NewCodec(), "application/json")
-	s.RegisterService(new(ExecutionService), "")
+	s.RegisterService(serverManagerService, "")
 
 	r := mux.NewRouter()
 	r.Handle("/", s)

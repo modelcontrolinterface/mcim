@@ -1,16 +1,18 @@
 package server
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
-type ExecutionService struct{}
+type ServerManagerService struct{}
 
-func (s *ExecutionService) Execute(r *http.Request, args *ExecuteRequest, reply *ExecuteResponse) error {
-	out := args.Code
+func (s *ServerManagerService) Connect(r *http.Request, args *ConnectRequest, reply *ConnectResponse) error {
+	reply.Message = fmt.Sprintf("Successfully connected to server ID: %s", args.ServerID)
+	return nil
+}
 
-	reply.ExecutionID = args.ExecutionID
-	reply.Output = &out
-	reply.StdErr = nil
-	reply.StdOut = nil
-
+func (s *ServerManagerService) Disconnect(r *http.Request, args *DisconnectRequest, reply *DisconnectResponse) error {
+	reply.Message = fmt.Sprintf("Successfully disconnected from server ID: %s", args.ServerID)
 	return nil
 }
