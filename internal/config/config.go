@@ -31,32 +31,52 @@ func LoadFile(path string) (*Config, error) {
 }
 
 func applyDefaults(cfg *Config) {
-	t := true
+	defaultEnable := true
+	defaultAutoReconnect := true
+	defaultConnectTimeout := "10s"
 
 	if cfg.Services != nil {
 		for name, service := range cfg.Services {
 			if service.Enable == nil {
-				service.Enable = &t
-				cfg.Services[name] = service
+				service.Enable = &defaultEnable
 			}
+			if service.AutoReconnect == nil {
+				service.AutoReconnect = &defaultAutoReconnect
+			}
+			if service.ConnectTimeout == nil {
+				service.ConnectTimeout = &defaultConnectTimeout
+			}
+			cfg.Services[name] = service
 		}
 	}
 
 	if cfg.Sandboxes != nil {
 		for name, sandbox := range cfg.Sandboxes {
 			if sandbox.Enable == nil {
-				sandbox.Enable = &t
-				cfg.Sandboxes[name] = sandbox
+				sandbox.Enable = &defaultEnable
 			}
+			if sandbox.AutoReconnect == nil {
+				sandbox.AutoReconnect = &defaultAutoReconnect
+			}
+			if sandbox.ConnectTimeout == nil {
+				sandbox.ConnectTimeout = &defaultConnectTimeout
+			}
+			cfg.Sandboxes[name] = sandbox
 		}
 	}
 
 	if cfg.Interceptors != nil {
 		for name, interceptor := range cfg.Interceptors {
 			if interceptor.Enable == nil {
-				interceptor.Enable = &t
-				cfg.Interceptors[name] = interceptor
+				interceptor.Enable = &defaultEnable
 			}
+			if interceptor.AutoReconnect == nil {
+				interceptor.AutoReconnect = &defaultAutoReconnect
+			}
+			if interceptor.ConnectTimeout == nil {
+				interceptor.ConnectTimeout = &defaultConnectTimeout
+			}
+			cfg.Interceptors[name] = interceptor
 		}
 	}
 }
@@ -67,8 +87,8 @@ func validateHash(s string) error {
 	}
 
 	for prefix, re := range validHashRegexes {
-		if strings.HasPrefix(s, prefix) {
-			hashPart := strings.TrimPrefix(s, prefix)
+		hashPart, found := strings.CutPrefix(s, prefix)
+		if found {
 			if !re.MatchString(hashPart) {
 				return fmt.Errorf("hash does not match expected format for prefix %q", prefix)
 			}

@@ -16,16 +16,19 @@ func TestConfig_WriteRead(t *testing.T) {
 	t.Parallel()
 
 	isEnabled := true
+	defaultConnectTimeout := "10s"
 	testConfigFile := filepath.Join(t.TempDir(), "test_config.toml")
 
 	expectedConfig := &Config{
 		Version: 1,
 
 		Sandboxes: map[string]Sandbox{
-			"daytona": {
-				Enable: &isEnabled,
-				Source: "github.com/daytona/daytona",
-				Hash:   "sha256-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+			"my-sandbox": {
+				Enable:         &isEnabled,
+				AutoReconnect:  &isEnabled,
+				ConnectTimeout: &defaultConnectTimeout,
+				Source:         "static.my-sandbox.io/mci.json",
+				Hash:           "sha256-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
 				Config: &map[string]any{
 					"foo": "bar",
 				},
@@ -34,10 +37,12 @@ func TestConfig_WriteRead(t *testing.T) {
 
 		Interceptors: map[string]Interceptor{
 			"logger": {
-				Enable:   &isEnabled,
-				Source:   "github.com/acme/interceptor",
-				Hash:     "sha256-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-				Priority: 10,
+				Enable:         &isEnabled,
+				AutoReconnect:  &isEnabled,
+				ConnectTimeout: &defaultConnectTimeout,
+				Source:         "static.mcilog.io/mci.json",
+				Hash:           "sha256-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+				Priority:       10,
 				Config: &map[string]any{
 					"baz": int64(123),
 				},
@@ -45,9 +50,11 @@ func TestConfig_WriteRead(t *testing.T) {
 		},
 
 		Services: map[string]Service{
-			"com.spotify/music": {
-				Enable: &isEnabled,
-				Hash:   "sha256-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+			"my-service": {
+				Enable:         &isEnabled,
+				AutoReconnect:  &isEnabled,
+				ConnectTimeout: &defaultConnectTimeout,
+				Hash:           "sha256-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
 				Config: &map[string]any{
 					"enabled": true,
 				},
@@ -79,10 +86,10 @@ func TestConfig_WriteRead(t *testing.T) {
 func TestConfig_Defaults(t *testing.T) {
 	t.Parallel()
 
-	t.Run("should set `enable` to true if unset", func(t *testing.T) {
+	t.Run("should set `enable`, `auto_reconnect`, and `connect_timeout` to defaults if unset", func(t *testing.T) {
 		testConfigFile := filepath.Join(t.TempDir(), "test_config.toml")
 		tomlData := `
-		[services."com.spotify/music"]
+		[services."my-service"]
 		hash = "sha256-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 		`
 
@@ -92,11 +99,17 @@ func TestConfig_Defaults(t *testing.T) {
 		cfg, err := LoadFile(testConfigFile)
 		require.NoError(t, err)
 
-		service := cfg.Services["com.spotify/music"]
+		service := cfg.Services["my-service"]
 		require.NotNil(t, service)
-		require.NotNil(t, service.Enable)
 
+		require.NotNil(t, service.Enable)
 		assert.True(t, *service.Enable)
+
+		require.NotNil(t, service.AutoReconnect)
+		assert.True(t, *service.AutoReconnect)
+
+		require.NotNil(t, service.ConnectTimeout)
+		assert.Equal(t, "10s", *service.ConnectTimeout)
 	})
 
 	t.Run("should not override `enable` if set", func(t *testing.T) {
@@ -104,7 +117,7 @@ func TestConfig_Defaults(t *testing.T) {
 
 		randomBool := rand.Intn(2) == 1
 		tomlData := fmt.Sprintf(`
-		[services."com.spotify/music"]
+		[services."my-service"]
 		enable = %v
 		hash = "sha256-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 		`, randomBool)
@@ -115,11 +128,56 @@ func TestConfig_Defaults(t *testing.T) {
 		cfg, err := LoadFile(testConfigFile)
 		require.NoError(t, err)
 
-		service := cfg.Services["com.spotify/music"]
+		service := cfg.Services["my-service"]
 		require.NotNil(t, service)
 		require.NotNil(t, service.Enable)
 
 		assert.True(t, *service.Enable == randomBool)
+	})
+
+	t.Run("should not override `auto_reconnect` if set", func(t *testing.T) {
+		testConfigFile := filepath.Join(t.TempDir(), "test_config.toml")
+
+		randomBool := rand.Intn(2) == 1
+		tomlData := fmt.Sprintf(`
+		[services."my-service"]
+		auto_reconnect = %v
+		hash = "sha256-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+		`, randomBool)
+
+		err := os.WriteFile(testConfigFile, []byte(tomlData), 0o644)
+		require.NoError(t, err)
+
+		cfg, err := LoadFile(testConfigFile)
+		require.NoError(t, err)
+
+		service := cfg.Services["my-service"]
+		require.NotNil(t, service)
+		require.NotNil(t, service.AutoReconnect)
+
+		assert.True(t, *service.AutoReconnect == randomBool)
+	})
+
+	t.Run("should not override `connect_timeout` if set", func(t *testing.T) {
+		customTimeout := "30s"
+		testConfigFile := filepath.Join(t.TempDir(), "test_config.toml")
+		tomlData := fmt.Sprintf(`
+		[services."my-service"]
+		connect_timeout = "%s"
+		hash = "sha256-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+		`, customTimeout)
+
+		err := os.WriteFile(testConfigFile, []byte(tomlData), 0o644)
+		require.NoError(t, err)
+
+		cfg, err := LoadFile(testConfigFile)
+		require.NoError(t, err)
+
+		service := cfg.Services["my-service"]
+		require.NotNil(t, service)
+		require.NotNil(t, service.ConnectTimeout)
+
+		assert.Equal(t, customTimeout, *service.ConnectTimeout)
 	})
 }
 
@@ -143,7 +201,7 @@ func TestConfig_Validation(t *testing.T) {
 	t.Run("should fail invalid hash format with unsupported prefix", func(t *testing.T) {
 		testConfigFile := filepath.Join(t.TempDir(), "test_config.toml")
 		tomlData := `
-		[sandboxes.my-sandbox]
+		[sandboxes.my-service]
 		hash = "sha1-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 		`
 
