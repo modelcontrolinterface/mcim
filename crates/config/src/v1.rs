@@ -1,6 +1,6 @@
 use crate::{ConfigError, ConfigVersion, Result, regex::*};
 use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use validator::{Validate, ValidationError};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
