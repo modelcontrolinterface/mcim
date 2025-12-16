@@ -151,7 +151,7 @@ fn validate_authors(authors: &[String]) -> std::result::Result<(), ValidationErr
     Err(err)
 }
 
-fn validate_path_exists(path: &PathBuf) -> std::result::Result<(), ValidationError> {
+fn validate_path_exists(path: &Path) -> std::result::Result<(), ValidationError> {
     if !path.exists() {
         let mut err = ValidationError::new("file_not_found");
         err.message = Some(format!("File not found: {}", path.display()).into());
