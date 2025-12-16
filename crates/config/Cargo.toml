@@ -1,0 +1,18 @@
+[package]
+name = "mcim-config"
+edition = "2024"
+version = "0.0.1"
+description = "MCIM configuration library"
+license = "MIT"
+
+[dependencies]
+anyhow = "1.0.100"
+lazy_static = "1.5.0"
+regex = "1.12.2"
+serde = "1.0.228"
+thiserror = "2.0.17"
+toml = "0.9.8"
+validator = { version = "0.20.0", features = ["derive"] }
+
+[dev-dependencies]
+tempfile = "3.23.0"

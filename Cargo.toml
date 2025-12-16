@@ -1,6 +1,9 @@
-[package]
-name = "mcim"
-version = "0.1.0"
-edition = "2024"
+[workspace]
+members = [ "crates/config" ]
 
-[dependencies]
+[workspace.package]
+license = "MIT"
+edition = "2024"
+version = "0.0.1"
+description = "Model control interface manager"
+repository = "https://github.com/modelcontrolinterface/mcim"
