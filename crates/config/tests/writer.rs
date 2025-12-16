@@ -1,4 +1,6 @@
-use mcim_config::{ConfigV1, ModuleConfig, PackageConfig, SchemaTypeEnum, writer::write_config, ConfigError};
+use mcim_config::{
+    ConfigError, ConfigV1, ModuleConfig, PackageConfig, SchemaTypeEnum, writer::write_config,
+};
 use std::path::Path;
 use tempfile::tempdir;
 
@@ -75,5 +77,8 @@ fn test_write_config_permission_denied() {
     assert!(result.is_err());
     let err = result.unwrap_err();
     assert!(matches!(err, ConfigError::Write(_)));
-    assert!(err.to_string().contains("Failed to write configuration to file"));
+    assert!(
+        err.to_string()
+            .contains("Failed to write configuration to file")
+    );
 }
