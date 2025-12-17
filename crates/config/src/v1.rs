@@ -5,7 +5,7 @@ use validator::{Validate, ValidationError};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
-pub enum ModuleTypeEnum {
+pub enum ModuleCategoryEnum {
     Server,
     Sandbox,
     Interceptor,
@@ -60,7 +60,7 @@ pub struct PackageConfig {
 
     #[serde(default)]
     #[validate(length(max = 3))]
-    pub types: Vec<ModuleTypeEnum>,
+    pub categories: Vec<ModuleCategoryEnum>,
 
     #[serde(default)]
     #[validate(custom(function = "validate_authors"))]

@@ -12,7 +12,7 @@ fn basic_config(schema_file: &Path) -> ConfigV1 {
             version: "0.1.0".to_string(),
             description: "A test package".to_string(),
             keywords: vec![],
-            types: vec![],
+            categories: vec![],
             authors: vec![],
             repository: None,
             homepage: None,

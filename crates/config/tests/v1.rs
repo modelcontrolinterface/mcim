@@ -1,7 +1,7 @@
 mod common;
 use crate::common::create_temp_config_file;
 use mcim_config::{
-    ConfigV1, ConfigVersion, ModuleConfig, ModuleTypeEnum, PackageConfig, SchemaTypeEnum,
+    ConfigV1, ConfigVersion, ModuleCategoryEnum, ModuleConfig, PackageConfig, SchemaTypeEnum,
 };
 use std::path::PathBuf;
 
@@ -11,7 +11,7 @@ fn basic_package_config() -> PackageConfig {
         version: "0.1.0".to_string(),
         description: "A test package".to_string(),
         keywords: vec![],
-        types: vec![],
+        categories: vec![],
         authors: vec![],
         repository: None,
         homepage: None,
@@ -112,7 +112,7 @@ fn test_package_config_validation() {
     test_validation!(version, "1.0".to_string(), false);
     test_validation!(description, "a".repeat(501), false);
     test_validation!(keywords, vec!["a".to_string(); 6], false);
-    test_validation!(types, vec![ModuleTypeEnum::Server; 4], false);
+    test_validation!(categories, vec![ModuleCategoryEnum::Server; 4], false);
     test_validation!(authors, vec!["<invalid>".to_string()], false);
     test_validation!(repository, Some("invalid-url".to_string()), false);
     test_validation!(homepage, Some("invalid-url".to_string()), false);
