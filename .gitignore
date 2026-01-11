@@ -21,3 +21,6 @@ target
 #.idea/
 
 .direnv/
+
+# Ignore generated SSL certificates
+certs/
