@@ -1,10 +1,10 @@
+use http_body_util::Empty;
+use hyper::body::Bytes;
+use hyper::{Request, Version};
+use hyper_util::rt::tokio::TokioIo;
 use mci::app;
 use std::net::SocketAddr;
 use tokio::net::TcpStream;
-use http_body_util::Empty;
-use hyper::body::Bytes;
-use hyper_util::rt::tokio::TokioIo;
-use hyper::{Request, Version};
 
 async fn spawn_app() -> SocketAddr {
     let app = app();

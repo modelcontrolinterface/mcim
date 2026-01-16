@@ -2,9 +2,9 @@ use axum::Router;
 use tower_http::trace::TraceLayer;
 
 pub mod api;
+pub mod config;
 pub mod domains;
 pub mod errors;
-pub mod config;
 
 pub fn app() -> Router {
     Router::new()

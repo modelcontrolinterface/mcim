@@ -1,8 +1,5 @@
+use crate::{domains::test::Message, errors::test::Result};
 use axum::Json;
-use crate::{
-    errors::test::Result,
-    domains::test::Message,
-};
 
 pub async fn json_message() -> Result<Json<Message>> {
     let message = Message {
