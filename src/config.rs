@@ -4,10 +4,10 @@ use serde::Deserialize;
 #[derive(Debug, Deserialize)]
 pub struct Config {
     pub address: String,
+    pub log_level: String,
 
     pub key_path: Option<String>,
     pub cert_path: Option<String>,
-    pub log_level: String,
 }
 
 impl Config {
