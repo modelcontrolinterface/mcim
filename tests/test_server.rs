@@ -8,6 +8,8 @@ use tokio::net::TcpStream;
 mod utils;
 
 async fn spawn_app() -> SocketAddr {
+    std::thread::sleep(std::time::Duration::from_secs(5));
+
     utils::generate_certs().await;
 
     std::env::set_var("MCI_ADDRESS", "127.0.0.1:0");

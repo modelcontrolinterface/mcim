@@ -17,6 +17,25 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: mci
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd "pg_isready -U postgres -d mci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+      s3:
+        image: chrislusf/seaweedfs
+        ports:
+          - 8333:8333
+        command: ["server", "-s3", "-dir=/data"]
 
     steps:
       - name: Checkout code
