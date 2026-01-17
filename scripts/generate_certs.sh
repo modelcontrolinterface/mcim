@@ -2,7 +2,7 @@
 
 CERT_DIR="certs"
 KEY_FILE="$CERT_DIR/key.pem"
-ERT_FILE="$CERT_DIR/cert.pem"
+CERT_FILE="$CERT_DIR/cert.pem"
 
 mkdir -p "$CERT_DIR"
 
