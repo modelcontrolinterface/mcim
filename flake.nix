@@ -37,6 +37,7 @@
               pre-commit
               pkg-config
               cargo-watch
+              docker-compose
               rustPackages.clippy
             ];
             RUST_SRC_PATH = rustPlatform.rustLibSrc;
